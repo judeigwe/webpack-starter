@@ -38,3 +38,15 @@ jobs:
 
     - name: Run linting
       run: npm run lint
+      
+    - name: List files in build directory
+      run: ls -R build
+
+    - name: Copy files to new directory
+      run: cp -r build new_build
+
+    - name: Archive files
+      uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: new_build
