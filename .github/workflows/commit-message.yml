@@ -1,0 +1,29 @@
+name: Commit Message Check
+on:
+  push:
+    branches:
+      - feature  # Change this to your main branch name
+  pull_request:
+    branches:
+      - main  # Change this to your main branch name
+
+jobs:
+  commit_message_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check commit messages
+        uses: actions/checkout@v2
+
+      - name: Validate commit messages
+        run: |
+          COMMIT_REGEX="^\[(Feature|Bugfix|Refactor|Docs|Test)\]: .{1,50}$"
+
+          for commit in $(git rev-list --no-merges --max-count=10 HEAD); do
+            message=$(git show -s --format=%B $commit)
+            if ! echo "$message" | grep -iqE "$COMMIT_REGEX"; then
+              echo "Invalid commit message format detected:"
+              echo "$message"
+              exit 1
+            fi
+          done
